@@ -68,17 +68,16 @@ def checkout(skus):
         'A': [(5, 200), (3, 130)],
         'B': [(2, 45)],
         'E': [(2, 'B')],
-        'F': [(2, 'F')],
         'H': [(10, 80), (5, 45)],
         'K': [(2, 120)],
         'N': [(3, 'M')],
         'P': [(5, 200)],
         'Q': [(3, 80)],
         'R': [(3, 'Q')],
-        'U': [(3, 'U')],
         'V': [(3, 130), (2, 90)]
     }
     group_offer = {'S', 'T', 'X', 'Y', 'Z'}
+    self_free_offers = [('U', 4), ('F', 3)]  # New list for items that get themselves free
 
     # Check for illegal input
     if not all(sku in price_table for sku in skus):
@@ -95,6 +94,12 @@ def checkout(skus):
                     free_count = sku_counts[sku] // offer_quantity
                     if free_item in sku_counts:
                         sku_counts[free_item] = max(0, sku_counts[free_item] - free_count)
+
+    # Handle items that get themselves free
+    for sku, offer_quantity in self_free_offers:
+        if sku in sku_counts:
+            free_count = sku_counts[sku] // offer_quantity
+            sku_counts[sku] -= free_count
 
     total = 0
     # Handle group offer
@@ -222,6 +227,7 @@ def test_checkout():
 
 # Run the tests
 test_checkout()
+
 
 
 
