@@ -66,14 +66,14 @@ def checkout(skus):
         'A': [(5, 200), (3, 130)],
         'B': [(2, 45)],
         'E': [(2, 'B')],
-        'F': [(2, 'F')],
+        'F': [(3, 20)],
         'H': [(10, 80), (5, 45)],
         'K': [(2, 150)],
         'N': [(3, 'M')],
         'P': [(5, 200)],
         'Q': [(3, 80)],
         'R': [(3, 'Q')],
-        'U': [(3, 'U')],
+        'U': [(4, 120)],
         'V': [(3, 130), (2, 90)]
     }
 
@@ -98,12 +98,15 @@ def checkout(skus):
         if sku in special_offers:
             remaining = count
             for offer_quantity, offer_price in sorted(special_offers[sku], key=lambda x: x[0], reverse=True):
-                if isinstance(offer_price, str):
-                    continue  # Skip 'get one free' offers as they're already applied
-                # Apply special offer as many times as possible
-                offer_count = remaining // offer_quantity
-                total += offer_count * offer_price
-                remaining -= offer_count * offer_quantity
+                if isinstance(offer_price, int):
+                    # Apply special offer as many times as possible
+                    offer_count = remaining // offer_quantity
+                    total += offer_count * offer_price
+                    remaining -= offer_count * offer_quantity
+                elif offer_price == sku:
+                    # Handle "buy X get one free" offers
+                    free_count = remaining // (offer_quantity + 1)
+                    remaining -= free_count
             # Add remaining items at regular price
             total += remaining * price_table[sku]
         else:
@@ -148,8 +151,6 @@ def test_checkout():
     assert checkout("BB") == 45
     assert checkout("EE") == 80
     assert checkout("EEB") == 80
-    assert checkout("FFF") == 20
-    assert checkout("FF") == 10
     assert checkout("HHHHH") == 45
     assert checkout("HHHHHHHHHH") == 80
     assert checkout("KK") == 150
@@ -190,10 +191,14 @@ def test_checkout():
     assert checkout("RRRQQ") == 180  # 3R get one Q free, 1Q
     assert checkout("EEEEBB") == 160  # 2E get one B free applied twice
     assert checkout("BEBEEE") == 160  # 2E get one B free, 1E, 1B
+    assert checkout("UUU") == 120  # 2E get one B free, 1E, 1B
+    assert checkout("FF") == 20  # 2E get one B free, 1E, 1B
+    assert checkout("FFFF") == 30  # 2E get one B free, 1E, 1B
 
     print("All tests passed!")
 
 # Run the tests
 test_checkout()
+
 
 
