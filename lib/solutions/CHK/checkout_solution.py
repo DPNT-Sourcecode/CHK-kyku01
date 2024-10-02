@@ -1,42 +1,43 @@
 """
-CHK_R4
-ROUND 4 - Broad range of products
-Our shop is growing so fast ! We have exceeded all expectations.
-But with more clients we get lots of requests for other items.
-Our management decided that it is time to start selling a broader range of products.
-We just got a good deal for 20 products. Please add the to the system.
+CHK_R5
+ROUND 5 - A new offer type + price updates
+All the other major supermarket have adopted a new offer type: group discount offer.
+The offer could be presented like: buy any 3 of a group of items for 45
+To keep up with the market, we need to make some price adjustments.
+Please use the new and updated price table.
 
 Our price table and offers: 
-+------+-------+------------------------+
-| Item | Price | Special offers         |
-+------+-------+------------------------+
-| A    | 50    | 3A for 130, 5A for 200 |
-| B    | 30    | 2B for 45              |
-| C    | 20    |                        |
-| D    | 15    |                        |
-| E    | 40    | 2E get one B free      |
-| F    | 10    | 2F get one F free      |
-| G    | 20    |                        |
-| H    | 10    | 5H for 45, 10H for 80  |
-| I    | 35    |                        |
-| J    | 60    |                        |
-| K    | 80    | 2K for 150             |
-| L    | 90    |                        |
-| M    | 15    |                        |
-| N    | 40    | 3N get one M free      |
-| O    | 10    |                        |
-| P    | 50    | 5P for 200             |
-| Q    | 30    | 3Q for 80              |
-| R    | 50    | 3R get one Q free      |
-| S    | 30    |                        |
-| T    | 20    |                        |
-| U    | 40    | 3U get one U free      |
-| V    | 50    | 2V for 90, 3V for 130  |
-| W    | 20    |                        |
-| X    | 90    |                        |
-| Y    | 10    |                        |
-| Z    | 50    |                        |
-+------+-------+------------------------+
++------+-------+---------------------------------+
+| Item | Price | Special offers                  |
++------+-------+---------------------------------+
+| A    | 50    | 3A for 130, 5A for 200          |
+| B    | 30    | 2B for 45                       |
+| C    | 20    |                                 |
+| D    | 15    |                                 |
+| E    | 40    | 2E get one B free               |
+| F    | 10    | 2F get one F free               |
+| G    | 20    |                                 |
+| H    | 10    | 5H for 45, 10H for 80           |
+| I    | 35    |                                 |
+| J    | 60    |                                 |
+| K    | 70    | 2K for 120                      |
+| L    | 90    |                                 |
+| M    | 15    |                                 |
+| N    | 40    | 3N get one M free               |
+| O    | 10    |                                 |
+| P    | 50    | 5P for 200                      |
+| Q    | 30    | 3Q for 80                       |
+| R    | 50    | 3R get one Q free               |
+| S    | 20    | buy any 3 of (S,T,X,Y,Z) for 45 |
+| T    | 20    | buy any 3 of (S,T,X,Y,Z) for 45 |
+| U    | 40    | 3U get one U free               |
+| V    | 50    | 2V for 90, 3V for 130           |
+| W    | 20    |                                 |
+| X    | 17    | buy any 3 of (S,T,X,Y,Z) for 45 |
+| Y    | 20    | buy any 3 of (S,T,X,Y,Z) for 45 |
+| Z    | 21    | buy any 3 of (S,T,X,Y,Z) for 45 |
++------+-------+---------------------------------+
+
 
 Notes: 
  - The policy of the supermarket is to always favor the customer when applying special offers.
@@ -50,6 +51,7 @@ Where:
  - param[0] = a String containing the SKUs of all the products in the basket
  - @return = an Integer representing the total checkout value of the items 
 
+
 """
 
 # noinspection PyUnusedLocal
@@ -58,24 +60,25 @@ def checkout(skus):
     # Define the price table and special offers
     price_table = {
         'A': 50, 'B': 30, 'C': 20, 'D': 15, 'E': 40, 'F': 10, 'G': 20, 'H': 10,
-        'I': 35, 'J': 60, 'K': 80, 'L': 90, 'M': 15, 'N': 40, 'O': 10, 'P': 50,
-        'Q': 30, 'R': 50, 'S': 30, 'T': 20, 'U': 40, 'V': 50, 'W': 20, 'X': 90,
-        'Y': 10, 'Z': 50
+        'I': 35, 'J': 60, 'K': 70, 'L': 90, 'M': 15, 'N': 40, 'O': 10, 'P': 50,
+        'Q': 30, 'R': 50, 'S': 20, 'T': 20, 'U': 40, 'V': 50, 'W': 20, 'X': 17,
+        'Y': 20, 'Z': 21
     }
     special_offers = {
         'A': [(5, 200), (3, 130)],
         'B': [(2, 45)],
         'E': [(2, 'B')],
-        'F': [(3, 20)],
+        'F': [(2, 'F')],
         'H': [(10, 80), (5, 45)],
-        'K': [(2, 150)],
+        'K': [(2, 120)],
         'N': [(3, 'M')],
         'P': [(5, 200)],
         'Q': [(3, 80)],
         'R': [(3, 'Q')],
-        'U': [(4, 120)],
+        'U': [(3, 'U')],
         'V': [(3, 130), (2, 90)]
     }
+    group_offer = {'S', 'T', 'X', 'Y', 'Z'}
 
     # Check for illegal input
     if not all(sku in price_table for sku in skus):
@@ -89,11 +92,24 @@ def checkout(skus):
         for offer_quantity, free_item in offers:
             if isinstance(free_item, str):
                 if sku in sku_counts:
+                    free_count = sku_counts[sku] // offer_quantity
                     if free_item in sku_counts:
-                        free_count = sku_counts[sku] // offer_quantity
                         sku_counts[free_item] = max(0, sku_counts[free_item] - free_count)
 
     total = 0
+    # Handle group offer
+    group_items = sum(sku_counts[sku] for sku in group_offer)
+    group_offer_count = group_items // 3
+    total += group_offer_count * 45
+    
+    # Sort group items by price (descending) to remove the most expensive ones first
+    sorted_group_items = sorted(group_offer, key=lambda x: price_table[x], reverse=True)
+    for sku in sorted_group_items:
+        if group_offer_count > 0:
+            remove_count = min(sku_counts[sku], group_offer_count * 3)
+            sku_counts[sku] -= remove_count
+            group_offer_count = max(0, group_offer_count - remove_count // 3)
+
     for sku, count in sku_counts.items():
         if sku in special_offers:
             remaining = count
@@ -103,12 +119,11 @@ def checkout(skus):
                     offer_count = remaining // offer_quantity
                     total += offer_count * offer_price
                     remaining -= offer_count * offer_quantity
-                elif offer_price == sku:
-                    # Handle "buy X get one free" offers
-                    free_count = remaining // (offer_quantity + 1)
-                    remaining -= free_count
             # Add remaining items at regular price
             total += remaining * price_table[sku]
+        elif sku in group_offer:
+            # Add remaining group items at regular price
+            total += count * price_table[sku]
         else:
             total += count * price_table[sku]
 
@@ -127,7 +142,7 @@ def test_checkout():
     assert checkout("H") == 10
     assert checkout("I") == 35
     assert checkout("J") == 60
-    assert checkout("K") == 80
+    assert checkout("K") == 70
     assert checkout("L") == 90
     assert checkout("M") == 15
     assert checkout("N") == 40
@@ -135,14 +150,14 @@ def test_checkout():
     assert checkout("P") == 50
     assert checkout("Q") == 30
     assert checkout("R") == 50
-    assert checkout("S") == 30
+    assert checkout("S") == 20
     assert checkout("T") == 20
     assert checkout("U") == 40
     assert checkout("V") == 50
     assert checkout("W") == 20
-    assert checkout("X") == 90
-    assert checkout("Y") == 10
-    assert checkout("Z") == 50
+    assert checkout("X") == 17
+    assert checkout("Y") == 20
+    assert checkout("Z") == 21
 
     # Test special offers
     assert checkout("AAA") == 130
@@ -153,7 +168,7 @@ def test_checkout():
     assert checkout("EEB") == 80
     assert checkout("HHHHH") == 45
     assert checkout("HHHHHHHHHH") == 80
-    assert checkout("KK") == 150
+    assert checkout("KK") == 120
     assert checkout("NNNM") == 120
     assert checkout("PPPPP") == 200
     assert checkout("QQQ") == 80
@@ -162,8 +177,15 @@ def test_checkout():
     assert checkout("VV") == 90
     assert checkout("VVV") == 130
 
+    # Test group offers
+    print("STX", checkout("STX"))
+    assert checkout("STX") == 45
+    assert checkout("STXYZ") == 82
+    assert checkout("SSSZ") == 65
+    assert checkout("ZZZS") == 65
+
     # Test mixed cases
-    assert checkout("ABCDEFGHIJKLMNOPQRSTUVWXYZ") == 965
+    assert checkout("ABCDEFGHIJKLMNOPQRSTUVWXYZ") == 837
     assert checkout("AAAAAEEBAAABB") == 455
     assert checkout("ABCDECBAABCABBAAAEEAA") == 665
     assert checkout("EEEEBB") == 160
@@ -191,14 +213,15 @@ def test_checkout():
     assert checkout("RRRQQ") == 180  # 3R get one Q free, 1Q
     assert checkout("EEEEBB") == 160  # 2E get one B free applied twice
     assert checkout("BEBEEE") == 160  # 2E get one B free, 1E, 1B
-    assert checkout("UUU") == 120  # 2E get one B free, 1E, 1B
-    assert checkout("FF") == 20  # 2E get one B free, 1E, 1B
-    assert checkout("FFFF") == 30  # 2E get one B free, 1E, 1B
+    assert checkout("UUU") == 120  # 3U get one U free
+    assert checkout("FF") == 20  # 2F get one F free
+    assert checkout("FFFF") == 30  # 2F get one F free, applied twice
 
     print("All tests passed!")
 
 # Run the tests
 test_checkout()
+
 
 
 
