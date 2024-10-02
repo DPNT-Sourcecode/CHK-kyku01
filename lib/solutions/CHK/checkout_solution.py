@@ -104,11 +104,16 @@ def checkout(skus):
     
     # Sort group items by price (descending) to remove the most expensive ones first
     sorted_group_items = sorted(group_offer, key=lambda x: price_table[x], reverse=True)
+    remaining_group_items = group_items % 3
     for sku in sorted_group_items:
         if group_offer_count > 0:
             remove_count = min(sku_counts[sku], group_offer_count * 3)
             sku_counts[sku] -= remove_count
             group_offer_count = max(0, group_offer_count - remove_count // 3)
+        if remaining_group_items > 0 and sku_counts[sku] > 0:
+            total += price_table[sku]
+            sku_counts[sku] -= 1
+            remaining_group_items -= 1
 
     for sku, count in sku_counts.items():
         if sku in special_offers:
@@ -121,10 +126,7 @@ def checkout(skus):
                     remaining -= offer_count * offer_quantity
             # Add remaining items at regular price
             total += remaining * price_table[sku]
-        elif sku in group_offer:
-            # Add remaining group items at regular price
-            total += count * price_table[sku]
-        else:
+        elif sku not in group_offer:
             total += count * price_table[sku]
 
     return total
@@ -178,8 +180,8 @@ def test_checkout():
     assert checkout("VVV") == 130
 
     # Test group offers
-    print("STX", checkout("STX"))
     assert checkout("STX") == 45
+    print("STXYZ", checkout("STXYZ"))
     assert checkout("STXYZ") == 82
     assert checkout("SSSZ") == 65
     assert checkout("ZZZS") == 65
@@ -221,6 +223,7 @@ def test_checkout():
 
 # Run the tests
 test_checkout()
+
 
 
 
