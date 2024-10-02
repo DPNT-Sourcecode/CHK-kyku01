@@ -227,10 +227,3 @@ def test_checkout():
 
 # Run the tests
 test_checkout()
-
-
-
-
-
-
-
