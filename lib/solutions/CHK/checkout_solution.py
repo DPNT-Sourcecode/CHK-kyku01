@@ -88,9 +88,10 @@ def checkout(skus):
     for sku, offers in special_offers.items():
         for offer_quantity, free_item in offers:
             if isinstance(free_item, str):
-                if sku in sku_counts and free_item in sku_counts:
-                    free_count = sku_counts[sku] // offer_quantity
-                    sku_counts[free_item] = max(0, sku_counts[free_item] - free_count)
+                if sku in sku_counts:
+                    if free_item in sku_counts:
+                        free_count = sku_counts[sku] // offer_quantity
+                        sku_counts[free_item] = max(0, sku_counts[free_item] - free_count)
 
     total = 0
     for sku, count in sku_counts.items():
@@ -109,7 +110,6 @@ def checkout(skus):
             total += count * price_table[sku]
 
     return total
-
 
 # Tests for the checkout function
 def test_checkout():
@@ -197,3 +197,4 @@ def test_checkout():
 
 # Run the tests
 test_checkout()
+
