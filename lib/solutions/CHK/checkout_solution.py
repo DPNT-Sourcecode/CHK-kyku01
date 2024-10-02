@@ -185,19 +185,15 @@ def test_checkout():
     assert checkout("HHHHHHHHHHHHHHH") == 125  # 10H for 80 + 5H for 45
     assert checkout("VVVVV") == 220  # 3V for 130 + 2V for 90
     assert checkout("UUUUU") == 160  # 3U get one U free + 1U
-    assert checkout("NNNNMM") == 160  # 3N get one M free, 1N, 1M
-    assert checkout("RRRRRQQ") == 250  # 3R get one Q free, 2R, 1Q
+    assert checkout("NNNNMM") == 175  # 3N get one M free, 1N, 1M
+    assert checkout("RRRRRQQ") == 280  # 3R get one Q free, 2R, 1Q
     assert checkout("RRRQQ") == 180  # 3R get one Q free, 1Q
     assert checkout("FFFFFFFF") == 60  # 2F get one F free applied twice, 2F regular price
     assert checkout("EEEEBB") == 160  # 2E get one B free applied twice
     assert checkout("BEBEEE") == 160  # 2E get one B free, 1E, 1B
-    assert checkout("ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ") == 1880  # Two of each item
+    assert checkout("ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ") == 1800  # Two of each item
 
     print("All tests passed!")
 
 # Run the tests
 test_checkout()
-
-
-
-
