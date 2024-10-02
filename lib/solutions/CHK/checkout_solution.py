@@ -1,11 +1,10 @@
 """
-CHK_R2
-ROUND 2 - More offers
-The checkout feature is great and our supermarket is doing fine. Is time to think about growth.
-Our marketing teams wants to experiment with new offer types and we should do our best to support them.
-
-We are going to sell a new item E.
-Normally E costs 40, but if you buy 2 of Es you will get B free. How cool is that ? Multi-priced items also seemed to work well so we should have more of these.
+CHK_R3
+ROUND 3 - More items and offers
+A new item has arrived. Item F.
+Our marketing team wants to try rewording the offer to see if it affects consumption
+Instead of multi-pricing this item they want to say "buy 2Fs and get another F free"
+The offer requires you to have 3 Fs in the basket.
 
 Our price table and offers: 
 +------+-------+------------------------+
@@ -16,6 +15,7 @@ Our price table and offers:
 | C    | 20    |                        |
 | D    | 15    |                        |
 | E    | 40    | 2E get one B free      |
+| F    | 10    | 2F get one F free      |
 +------+-------+------------------------+
 
 
@@ -42,12 +42,14 @@ def checkout(skus):
         'B': 30,
         'C': 20,
         'D': 15,
-        'E': 40
+        'E': 40,
+        'F': 10
     }
     special_offers = {
         'A': [(3, 130), (5, 200)],
         'B': [(2, 45)],
-        'E': [(2, 'B')]
+        'E': [(2, 'B')],
+        'F': [(3, 20)]  # 2F get one F free, effectively 3F for 20
     }
 
     # Check for illegal input
@@ -89,6 +91,7 @@ def test_checkout():
     assert checkout("C") == 20
     assert checkout("D") == 15
     assert checkout("E") == 40
+    assert checkout("F") == 10
     assert checkout("ABCD") == 115
 
     # Test special offers
@@ -98,11 +101,17 @@ def test_checkout():
     assert checkout("AAAAAA") == 250
     assert checkout("EE") == 80
     assert checkout("EEB") == 80
+    assert checkout("FFF") == 20
+    assert checkout("FF") == 20
+    assert checkout("FFFF") == 30
 
     # Test mixed cases
     assert checkout("AAABB") == 175
     assert checkout("ABCDABCD") == 215
     assert checkout("EEEEBB") == 160
+    assert checkout("ABCDEABCDE") == 280
+    assert checkout("AAAAAEEBAAABB") == 455
+    assert checkout("ABCDECBAABCABBAAAEEAA") == 665
 
     # Test empty string
     assert checkout("") == 0
@@ -112,11 +121,12 @@ def test_checkout():
     assert checkout("ABCd") == -1
     assert checkout("-A") == -1
     assert checkout("A-B") == -1
-    assert checkout("ABCDF") == -1
+    assert checkout("ABCDG") == -1
 
     print("All tests passed!")
 
 # Run the tests
 test_checkout()
+
 
 
